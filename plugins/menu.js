@@ -3,6 +3,7 @@ let path = require('path')
 let levelling = require('../lib/levelling')
 let tags = {
   'main': 'Main',
+  'squidgame': 'Squid Game',
   'rpg': 'Epic RPG',
   'game': 'Game',
   'xp': 'Exp & Limit',
@@ -31,25 +32,35 @@ let tags = {
 }
 const defaultMenu = {
   before: `
-╭─「 %me 」
-│ %ucapan, %name!
-│
-│ Tanggal: *%week %weton, %date*
-│ Tanggal Islam: *%dateIslamic*
-│ Waktu: *%time*
-│
-│ Uptime: *%uptime (%muptime)*
-│ Database: %rtotalreg of %totalreg
-│ Github:
-│ %github
-╰────
+_%ucapan %name_
+
+┏━━⊱ _BOT Info_ ⊰━━┓
+┣⊱ _Creator : wa.me/60199782326_
+┣⊱ _Prefix : %p_
+┣⊱ _Language : JavaScript_
+┣⊱ _Framework : Nodejs_
+┣⊱ _Uptime : %uptime_
+┣⊱ _Total User : %totalreg_
+┗━━━━━━━━━━━━━━━━
+┏━━⊱ _Info User_ ⊰━━┓
+┣⊱ _Name : %name_
+┣⊱ _Limit : %limit_
+┣⊱ _XP : %exp_
+┗━━━━━━━━━━━━━━━━
+┏━━⊱ _Date Time_ ⊰━━┓
+┣⊱ _Time : %time_
+┣⊱ _Date : %date_
+┣⊱ _Week : %week_
+┗━━━━━━━━━━━━━━━━
+┏━━⊱ _New Feature_ ⊰━━┓
+┣⊱ _SquidGame (red light green light)_
+┗━━━━━━━━━━━━━━━━
 %readmore`.trimStart(),
-  header: '╭─「 %category 」',
-  body: '│ • %cmd %islimit %isPremium',
-  footer: '╰────\n',
+  header: '┏━━⊱ _%category_ ⊰━━┓',
+  body: '┣⊱ %cmd',
+  footer: '┗━━━━━━━━━━━━━━━━\n',
   after: `
-*%npmname@^%version*
-${'```%npmdesc```'}
+\`\`\`BOT BY ADII\`\`\`
 `,
 }
 let handler = async (m, { conn, usedPrefix: _p }) => {
@@ -104,8 +115,8 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     })
     for (let plugin of help)
       if (plugin && 'tags' in plugin)
-        for (let tag of plugin.tags)
-          if (!(tag in tags) && tag) tags[tag] = tag
+        // for (let tag of plugin.tags)
+        //  if (!(tag in tags) && tag) tags[tag] = tag
     conn.menu = conn.menu ? conn.menu : {}
     let before = conn.menu.before || defaultMenu.before
     let header = conn.menu.header || defaultMenu.header
@@ -144,15 +155,15 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     }
     text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
     let pp = await conn.getProfilePicture(conn.user.jid).catch(_ => path.join(__dirname, '../src/avatar_contact.png'))
-    conn.sendFile(m.chat, pp, 'menu.jpg', text.trim(), m).catch(_ => conn.reply(m.chat, text.trim(), m))
+    conn.sendButton(m.chat, text.trim(), 'ketuk readmore ya', 'OWNER', '.owner', m, {contextInfo: { forwardingScore: 520, isForwarded: true, externalAdReply:{title: "ADYY BOTZ",body:``,previewType:"PHOTO",thumbnail:pp,sourceUrl:""}}})
   } catch (e) {
     conn.reply(m.chat, 'Maaf, menu sedang error', m)
     throw e
   }
 }
-handler.help = ['menu', 'help', '?']
+handler.help = ['command']
 handler.tags = ['main']
-handler.command = /^(menu|help|\?)$/i
+handler.command = /^(command)$/i
 handler.owner = false
 handler.mods = false
 handler.premium = false
@@ -163,7 +174,7 @@ handler.admin = false
 handler.botAdmin = false
 
 handler.fail = null
-handler.exp = 3
+handler.exp = false
 
 module.exports = handler
 
